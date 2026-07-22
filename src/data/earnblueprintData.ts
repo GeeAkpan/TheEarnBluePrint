@@ -158,6 +158,42 @@ export const PRODUCTS_DATA: Product[] = [
     ctaClass: 'btn-main',
     featured: false,
     link: 'https://selar.com/586e14m7b8'
+  },
+  {
+    id: 'building-ai-agents-guide',
+    title: "Building AI Agents: From Zero to Your First Working Agent",
+    category: 'ai-tech',
+    tag: 'NEW · INSTANT DELIVERY',
+    tagClass: 't-free',
+    price: '₦5,000',
+    desc: "A beginner's guide to building autonomous AI agents step-by-step. Go from zero to deploying your first working AI agent system.",
+    highlights: [
+      'Zero-to-One AI agent development roadmap',
+      'Core agentic frameworks & prompt logic',
+      'Building real-world automated agent workflows'
+    ],
+    cta: 'Get AI Agents Guide — ₦5,000',
+    ctaClass: 'btn-main',
+    featured: false,
+    link: 'https://selar.com/hz54g77v77'
+  },
+  {
+    id: 'personal-books-collection',
+    title: 'Godswill Akpan Personal Books',
+    category: 'entrepreneurship',
+    tag: 'COLLECTION',
+    tagClass: 't-paid',
+    price: 'INSTANT ACCESS',
+    desc: 'Personal ebooks, strategic guides, and foundational books by Godswill Akpan on growth, career execution, and modern business.',
+    highlights: [
+      'Curated personal books & frameworks',
+      'Actionable execution blueprints',
+      'Direct access via Selar digital store'
+    ],
+    cta: 'Explore Personal Books',
+    ctaClass: 'btn-main',
+    featured: false,
+    link: 'https://selar.com/95f95a6737'
   }
 ];
 
@@ -190,6 +226,8 @@ export const CONTACT_EMAIL = 'godswillakp18@gmail.com';
 export const LINKTREE_URL = 'https://linktr.ee/geeakpan';
 export const CONCAVE_LABS_URL = 'https://theconcavelabs.org';
 export const GODSWILL_NOTION_URL = 'https://coherent-suggestion-164.notion.site/Godswill-Akpan-1d388cf6c8ea8042a57ef6d9d5d5a604';
+export const AI_AGENTS_BOOK_URL = 'https://selar.com/hz54g77v77';
+export const PERSONAL_BOOKS_URL = 'https://selar.com/95f95a6737';
 
 export const FOUNDER_DATA = {
   name: "Godswill Akpan",
