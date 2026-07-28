@@ -179,18 +179,18 @@ export const PRODUCTS_DATA: Product[] = [
   },
   {
     id: 'personal-books-collection',
-    title: 'Godswill Akpan Personal Books',
+    title: 'The Earn Blueprint Books Collection',
     category: 'entrepreneurship',
     tag: 'COLLECTION',
     tagClass: 't-paid',
     price: 'INSTANT ACCESS',
-    desc: 'Personal ebooks, strategic guides, and foundational books by Godswill Akpan on growth, career execution, and modern business.',
+    desc: 'Ebooks, strategic guides, and foundational books on growth, career execution, and modern business.',
     highlights: [
-      'Curated personal books & frameworks',
+      'Curated books & frameworks',
       'Actionable execution blueprints',
       'Direct access via Selar digital store'
     ],
-    cta: 'Explore Personal Books',
+    cta: 'Explore Books',
     ctaClass: 'btn-main',
     featured: false,
     link: 'https://selar.com/95f95a6737'
@@ -220,36 +220,33 @@ export const BUNDLE_DATA: Product = {
   link: 'https://selar.com/771s547758'
 };
 
-export const SELAR_STORE_URL = 'https://selar.com/m/godswill-akpan2317715';
+export const SELAR_STORE_URL = 'https://selar.com/m/theearneblueprint';
 export const TELEGRAM_URL = 'https://t.me/ftldofficial';
-export const CONTACT_EMAIL = 'godswillakp18@gmail.com';
-export const LINKTREE_URL = 'https://linktr.ee/geeakpan';
+export const CONTACT_EMAIL = 'support@theearneblueprint.co';
+export const LINKTREE_URL = 'https://linktr.ee/theearneblueprint';
 export const CONCAVE_LABS_URL = 'https://theconcavelabs.org';
-export const GODSWILL_NOTION_URL = 'https://coherent-suggestion-164.notion.site/Godswill-Akpan-1d388cf6c8ea8042a57ef6d9d5d5a604';
 export const AI_AGENTS_BOOK_URL = 'https://selar.com/hz54g77v77';
 export const PERSONAL_BOOKS_URL = 'https://selar.com/95f95a6737';
 
 export const FOUNDER_DATA = {
-  name: "Godswill Akpan",
-  title: "Founder · The Earn Blueprint | FTLD | The Concave Labs",
+  name: "The Earn Blueprint Team",
+  title: "The Earn Blueprint | FTLD | The Concave Labs",
   stats: [
-    { value: "7 Yrs", label: "Freelancing" },
+    { value: "7 Yrs", label: "Building Systems" },
     { value: "5K+", label: "People Trained" },
     { value: "3K+", label: "Innovate 2025" },
     { value: "2.3K+", label: "FTLD Members" }
   ],
   socials: [
-    { platform: "📝", handle: "Godswill Akpan (Notion)", link: GODSWILL_NOTION_URL },
     { platform: "💬", handle: "t.me/ftldofficial", link: TELEGRAM_URL },
     { platform: "⚙️", handle: "theconcavelabs.org", link: CONCAVE_LABS_URL },
-    { platform: "🌳", handle: "linktr.ee/geeakpan", link: LINKTREE_URL },
     { platform: "𝕏", handle: "@the_ftldconcave", link: "https://twitter.com/the_ftldconcave" },
     { platform: "🌍", handle: "ftld.org", link: "https://ftld.org" }
   ],
-  keyQuote: "The problem was never my skill. Nobody taught me the business.",
+  keyQuote: "The problem was never skill. Nobody taught the business.",
   bioParagraphs: [
-    "I did not learn any of this from a course. I learned it from seven years of sending emails, building proposals, navigating platforms, raising rates, losing clients, winning better ones, and slowly building something real.",
-    "The Earn Blueprint is not just a product store. It is the place I wish had existed when I was starting out. Every guide, every insight, every tool on this platform is built from real experience — tested in real situations, with real results.",
+    "We did not build this from theoretical courses. We built it from seven years of sending emails, building proposals, navigating platforms, raising rates, losing clients, winning better ones, and slowly building something real.",
+    "The Earn Blueprint is not just a product store. It is the platform we wish had existed when starting out. Every guide, every insight, every tool on this platform is built from real experience — tested in real situations, with real results.",
     "We are just getting started. The library grows. The pillars expand. The community deepens. This is a long-term platform built for people who are serious about building income."
   ]
 };
@@ -263,7 +260,7 @@ export const INSIGHTS_DATA: Insight[] = [
     title: 'The 5 cold email mistakes that are killing your reply rate — and how to fix every one of them',
     excerpt: 'Most cold emails get ignored because they pitch before building relevance. Here is the fix.',
     readTime: '7 min read',
-    author: 'Godswill Akpan',
+    author: 'The Earn Blueprint Team',
     date: '2025',
     content: [
       'Mistake 1: Writing a long bio about yourself instead of focusing on the client\'s immediate problem.',
@@ -281,7 +278,7 @@ export const INSIGHTS_DATA: Insight[] = [
     title: 'Why your Upwork profile gets views but zero invitations',
     excerpt: 'A high view count with zero invites means your headline and overview are failing to build instant trust.',
     readTime: '5 min read',
-    author: 'Godswill Akpan',
+    author: 'The Earn Blueprint Team',
     date: '2025',
     content: [
       'Clients browse Upwork looking for problem solvers, not generic title lists.',
@@ -297,7 +294,7 @@ export const INSIGHTS_DATA: Insight[] = [
     title: 'How to use AI tools to 10x your productivity as a freelancer or entrepreneur',
     excerpt: 'Leverage AI for rapid research, proposal drafting, and client deliverable velocity without sacrificing quality.',
     readTime: '6 min read',
-    author: 'Godswill Akpan',
+    author: 'The Earn Blueprint Team',
     date: '2025',
     content: [
       'AI is an amplifier for clear thinkers. Use LLMs to generate research outlines and proposal drafts in minutes.',

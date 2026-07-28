@@ -1,5 +1,5 @@
 import React from 'react';
-import { FOUNDER_DATA, GODSWILL_NOTION_URL } from '../../data/earnblueprintData';
+import { FOUNDER_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal } from './ScrollReveal';
 
 export const AboutSection: React.FC = () => {
@@ -7,14 +7,14 @@ export const AboutSection: React.FC = () => {
     <section className="py-24 px-[5%] bg-[#08152b] border-b border-white/5 relative">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Founder Story Text */}
+          {/* Platform Story Text */}
           <ScrollReveal direction="left" className="lg:col-span-7 flex flex-col items-start gap-6">
             <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
-              Founder Story
+              Platform Story
             </span>
 
             <h2 className="font-space font-bold text-3xl sm:text-4xl md:text-5xl text-white leading-tight">
-              Who built this — <span className="text-[#14b8a6]">7 years of doing it the hard way.</span>
+              Why we built this — <span className="text-[#14b8a6]">7 years of real execution.</span>
             </h2>
 
             <div className="space-y-4 text-gray-300 text-sm sm:text-base leading-relaxed">
@@ -28,23 +28,14 @@ export const AboutSection: React.FC = () => {
                 "{FOUNDER_DATA.keyQuote}"
               </p>
             </div>
-
-            <a
-              href={GODSWILL_NOTION_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="font-space text-xs font-bold px-6 py-3.5 rounded-xl bg-[#14b8a6] text-white uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_24px_rgba(20,184,166,0.4)] inline-block"
-            >
-              Read the full story &rarr;
-            </a>
           </ScrollReveal>
 
-          {/* Founder Bio Card */}
+          {/* Platform Profile Card */}
           <ScrollReveal direction="right" delay={0.15} className="lg:col-span-5">
             <div className="rounded-2xl bg-gradient-to-b from-white/10 to-white/5 border border-white/15 p-8 backdrop-blur-xl shadow-2xl flex flex-col gap-6 text-center items-center">
               <div className="w-24 h-24 rounded-full bg-[#14b8a6]/20 border-2 border-[#14b8a6] p-1 flex items-center justify-center">
                 <div className="w-full h-full rounded-full bg-[#1a3f7a] flex items-center justify-center font-space font-bold text-2xl text-white">
-                  GA
+                  EB
                 </div>
               </div>
 

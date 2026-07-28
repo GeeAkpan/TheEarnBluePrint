@@ -14,14 +14,14 @@ interface Testimonial {
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    quote: "GeeAkpan has an uncanny ability to turn absolute ambiguity into organized product systems. He aligned our technical roadmaps and accelerated our GTM launch strategy by weeks.",
-    author: "Alexander Chen",
-    role: "Founder & CEO",
-    company: "Aethera SaaS"
+    quote: "The Earn Blueprint team has an uncanny ability to turn absolute ambiguity into organized product systems. They aligned our technical roadmaps and accelerated our GTM launch strategy by weeks.",
+    author: "Elena Rostova",
+    role: "Head of Product",
+    company: "Veloce Labs"
   },
   {
     // Mode-specific role (developer focused)
-    quote: "Working with GeeAkpan is a developer's dream. He bridges the gap between complex software architecture and user experience metrics, ensuring we build products people actually love.",
+    quote: "Working with The Earn Blueprint team is a developer's dream. They bridge the gap between complex software architecture and user experience metrics, ensuring we build products people actually love.",
     author: "Elena Rostova",
     role: "Lead Smart Contract Engineer",
     company: "Solari Labs"

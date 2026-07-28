@@ -9,7 +9,7 @@ interface ContactSectionProps {
 const SOCIAL_LINKS = [
   {
     name: "Email",
-    href: "mailto:godswillakp18@gmail.com",
+    href: "mailto:support@theearneblueprint.co",
     icon: <Mail size={16} />
   },
   {

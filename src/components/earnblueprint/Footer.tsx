@@ -95,7 +95,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-          <p>© 2025 The Earn Blueprint. Founded by Godswill Akpan · theearneblueprint.co</p>
+          <p>© 2025 The Earn Blueprint. All rights reserved. · theearneblueprint.co</p>
           <p className="font-mono text-[11px]">Built for real earnings.</p>
         </div>
       </div>

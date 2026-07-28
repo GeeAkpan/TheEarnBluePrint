@@ -1,6 +1,5 @@
 import React from 'react';
 import { ScrollVideoBackground } from './ScrollVideoBackground';
-import { AppleScrollMotionGraphic } from './AppleScrollMotionGraphic';
 import { HERO_DATA } from '../../data/earnblueprintData';
 
 interface HeroSectionProps {
@@ -15,7 +14,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   containerRef,
 }) => {
   return (
-    <section className="relative min-h-[92vh] bg-[#0d1f3c] flex flex-col items-center pt-28 pb-20 px-[5%] overflow-hidden border-b border-white/10">
+    <section className="relative min-h-[92vh] bg-[#0d1f3c] flex items-center pt-28 pb-20 px-[5%] overflow-hidden border-b border-white/10">
       {/* Scroll-Driven Video Background Component */}
       <ScrollVideoBackground containerRef={containerRef} />
 
@@ -23,7 +22,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute -top-24 -right-24 w-[550px] h-[550px] bg-[radial-gradient(circle,rgba(20,184,166,0.18)_0%,transparent_70%)] rounded-full pointer-events-none z-10" />
       <div className="absolute -bottom-24 -left-24 w-[550px] h-[550px] bg-[radial-gradient(circle,rgba(43,171,235,0.15)_0%,transparent_70%)] rounded-full pointer-events-none z-10" />
 
-      <div className="max-w-[1200px] mx-auto w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-8">
+      <div className="max-w-[1200px] mx-auto w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Main Text Content */}
         <div className="lg:col-span-7 flex flex-col items-start gap-6">
           {/* Pillar Badges Row */}
@@ -91,11 +90,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Apple-Style Scroll Motion Graphic Frame */}
-      <div className="w-full max-w-[1200px] mx-auto relative z-20 mt-6">
-        <AppleScrollMotionGraphic containerRef={containerRef} />
       </div>
     </section>
   );

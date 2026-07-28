@@ -98,7 +98,7 @@ export const ContactSection: React.FC = () => {
                 <div>
                   <h4 className="font-space text-xs font-bold text-gray-400 uppercase">Linktree / Founder Links</h4>
                   <a href={LINKTREE_URL} target="_blank" rel="noreferrer" className="text-sm font-semibold text-white hover:text-emerald-400">
-                    linktr.ee/geeakpan
+                    linktr.ee/theearneblueprint
                   </a>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export const ContactSection: React.FC = () => {
             <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-8 sm:p-10 shadow-2xl relative">
               {submitted && (
                 <div className="mb-6 p-4 rounded-xl bg-[#14b8a6]/20 border border-[#14b8a6] text-[#14b8a6] text-sm font-semibold text-center animate-fadeIn">
-                  ✓ Message sent! Godswill Akpan will get back to you shortly.
+                  ✓ Message sent! The Earn Blueprint team will get back to you shortly.
                 </div>
               )}
 

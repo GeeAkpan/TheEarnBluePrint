@@ -32,7 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({ mode }) => {
           href="#home" 
           className="font-display font-black text-xl uppercase tracking-widest text-[var(--text-color)] hover:opacity-85 transition-opacity"
         >
-          GeeAkpan
+          The Earn Blueprint
         </a>
 
         {/* Desktop Links */}
