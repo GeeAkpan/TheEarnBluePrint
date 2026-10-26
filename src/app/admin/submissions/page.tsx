@@ -15,6 +15,7 @@ type Submission = {
   job_type: string;
   remote: boolean;
   contact_email: string;
+  description: string | null;
   submitted_at: Date;
 };
 
@@ -34,9 +35,10 @@ async function fetchPending(): Promise<Submission[]> {
       submitted_at timestamptz NOT NULL DEFAULT now(),
       reviewed_at timestamptz
     );
+    ALTER TABLE job_submissions ADD COLUMN IF NOT EXISTS description text;
   `);
   const { rows } = await pool.query<Submission>(
-    `SELECT id, title, company, url, category, region, job_type, remote, contact_email, submitted_at
+    `SELECT id, title, company, url, category, region, job_type, remote, contact_email, description, submitted_at
        FROM job_submissions WHERE status = 'pending' ORDER BY submitted_at ASC`,
   );
   return rows;
@@ -88,6 +90,11 @@ export default async function AdminSubmissionsPage() {
                   <p className="text-xs text-gray-600 mt-1">
                     Submitted {new Date(s.submitted_at).toLocaleString()}
                   </p>
+                  {s.description && (
+                    <p className="text-sm text-gray-300 mt-3 whitespace-pre-wrap max-w-[500px]">
+                      {s.description}
+                    </p>
+                  )}
                 </div>
                 <SubmissionActions id={s.id} />
               </li>

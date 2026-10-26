@@ -26,6 +26,7 @@ export default function PostJobPage() {
       job_type: String(form.get('job_type') ?? ''),
       remote: form.get('remote') === 'on',
       contact_email: String(form.get('contact_email') ?? ''),
+      description: String(form.get('description') ?? ''),
     };
 
     try {
@@ -107,6 +108,16 @@ export default function PostJobPage() {
             <div>
               <label className={labelClass}>Category *</label>
               <input type="text" name="category" required placeholder="e.g. Software & IT" className={inputClass} />
+            </div>
+
+            <div>
+              <label className={labelClass}>Job Description</label>
+              <textarea
+                name="description"
+                rows={6}
+                placeholder="Responsibilities, requirements, what makes this role worth applying to…"
+                className={`${inputClass} resize-none`}
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

@@ -51,9 +51,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       `UPDATE job_submissions SET status = 'approved', reviewed_at = now() WHERE id = $1`,
       [id],
     );
+    // jobs.description doesn't exist on older rows (JobScalper's own scraper
+    // never wrote one) — nullable add is backward-compatible.
+    await client.query(`ALTER TABLE jobs ADD COLUMN IF NOT EXISTS description text`);
     await client.query(
-      `INSERT INTO jobs (id, fingerprint, title, company, url, source, category, region, job_type, remote, posted_at)
-       VALUES ($1, $2, $3, $4, $5, 'submitted', $6, $7, $8, $9, now())
+      `INSERT INTO jobs (id, fingerprint, title, company, url, source, category, region, job_type, remote, posted_at, description)
+       VALUES ($1, $2, $3, $4, $5, 'submitted', $6, $7, $8, $9, now(), $10)
        ON CONFLICT (id) DO NOTHING`,
       [
         `submitted:${submission.id}`,
@@ -65,6 +68,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         submission.region,
         submission.job_type,
         submission.remote,
+        submission.description ?? null,
       ],
     );
     await client.query('COMMIT');

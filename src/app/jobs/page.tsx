@@ -17,6 +17,7 @@ type JobRow = {
   job_type: string;
   remote: boolean;
   first_seen: Date;
+  description: string | null;
 };
 
 const FILTERS: Record<string, { label: string; where: string }> = {
@@ -82,7 +83,7 @@ async function fetchJobs(
 
   const [{ rows }, { rows: countRows }] = await Promise.all([
     pool.query<JobRow>(
-      `SELECT title, company, url, category, region, job_type, remote, first_seen
+      `SELECT title, company, url, category, region, job_type, remote, first_seen, description
          FROM jobs
         WHERE ${whereSql}
         ORDER BY first_seen DESC
@@ -319,6 +320,11 @@ export default async function JobsPage({
                       <span>{job.job_type}</span>
                       <span className="text-[#14b8a6]">{job.category}</span>
                     </div>
+                    {job.description && (
+                      <p className="text-sm text-gray-400 mt-3 leading-relaxed line-clamp-3">
+                        {job.description}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 self-start">
                     <Link
