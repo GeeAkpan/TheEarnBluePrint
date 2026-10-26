@@ -199,14 +199,22 @@ export default async function JobsPage({
                       <span className="text-[#14b8a6]">{job.category}</span>
                     </div>
                   </div>
-                  <a
-                    href={job.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-space text-xs font-bold px-4 py-2 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] whitespace-nowrap self-start"
-                  >
-                    View &amp; Apply
-                  </a>
+                  <div className="flex flex-col sm:flex-row gap-2 self-start">
+                    <Link
+                      href={`/jobs/pitch?title=${encodeURIComponent(job.title)}&company=${encodeURIComponent(job.company ?? '')}&category=${encodeURIComponent(job.category)}`}
+                      className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-[#14b8a6]/50 text-[#14b8a6] tracking-wider uppercase transition-all hover:bg-[#14b8a6]/10 whitespace-nowrap text-center"
+                    >
+                      ✍️ Generate Pitch
+                    </Link>
+                    <a
+                      href={job.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-space text-xs font-bold px-4 py-2 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] whitespace-nowrap text-center"
+                    >
+                      View &amp; Apply
+                    </a>
+                  </div>
                 </div>
               </li>
             ))}
