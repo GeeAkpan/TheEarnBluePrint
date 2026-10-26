@@ -7,14 +7,8 @@ export const HERO_DATA = {
   stats: [
     { value: "5,000+", label: "People Trained" },
     { value: "4", label: "Guides Live Now" },
-    { value: "3,000+", label: "Innovate Attendees" },
-    { value: "7 Yrs", label: "Building Live" }
-  ],
-  pillarBadges: [
-    { icon: "💼", label: "Freelancing" },
-    { icon: "🚀", label: "Entrepreneurship" },
-    { icon: "📈", label: "Business Growth" },
-    { icon: "🤖", label: "AI and Tech" }
+    { value: "5,000+", label: "Innovate Attendees" },
+    { value: "5 Yrs", label: "Building Live" }
   ]
 };
 
@@ -43,14 +37,15 @@ export const PILLARS_DATA: Pillar[] = [
     name: 'Entrepreneurship',
     badge: 'Pillar 02',
     headline: 'Launch & Scale Digital Products',
-    tagline: 'Launch digital products, build brands, create income streams, and grow from solo operator to real business owner.',
-    status: 'Coming soon',
-    isAvailable: false,
+    tagline: 'List and sell products to this community. Buyers order directly on WhatsApp — free to list, for now.',
+    status: 'Live now · free to list',
+    isAvailable: true,
     bullets: [
-      'Digital product idea validation & Gumroad / LemonSqueezy launchkits',
-      'Audience-first brand positioning & organic content funnels',
-      'Productized service frameworks & revenue diversification'
-    ]
+      'A storefront for products made by people in this community',
+      'Buyers message you directly on WhatsApp to order',
+      'No commission or listing fee right now'
+    ],
+    link: '/store'
   },
   {
     id: 'business-growth',
@@ -83,6 +78,40 @@ export const PILLARS_DATA: Pillar[] = [
       'Web3 & decentralized digital infrastructure monetization',
       'Automated marketing & client onboarding tech stacks'
     ]
+  },
+  {
+    id: 'jobs',
+    num: '05',
+    icon: '📋',
+    name: 'Jobs',
+    badge: 'Pillar 05',
+    headline: 'Fresh Roles, Updated Daily',
+    tagline: 'Tech and non-tech roles, remote and on-site, internships — aggregated daily from public job boards across Nigeria, Africa, and the world.',
+    status: 'Live now · updated daily',
+    isAvailable: true,
+    bullets: [
+      'Remote and on-site roles across tech, marketing, design, and more',
+      'Filter by region: Nigeria, Africa, or worldwide',
+      'Internships and graduate programmes alongside full-time roles'
+    ],
+    link: '/jobs'
+  },
+  {
+    id: 'earn-with-ai',
+    num: '06',
+    icon: '🧠',
+    name: 'Earn with AI',
+    badge: 'Pillar 06',
+    headline: 'Get Paid to Train AI',
+    tagline: 'Hand-verified platforms paying for RLHF, data labeling, and model evaluation work — with real eligibility notes, since this space is heavily targeted by scams.',
+    status: 'Live now · hand-verified',
+    isAvailable: true,
+    bullets: [
+      'Mercor, Micro1, Outlier, Alignerr, Surge AI, and more',
+      'Pay ranges and eligibility checked per platform, per country',
+      'Flags scam risk — never pay to apply or "unlock" work'
+    ],
+    link: '/earn-with-ai'
   }
 ];
 

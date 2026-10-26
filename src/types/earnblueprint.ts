@@ -9,6 +9,7 @@ export interface Pillar {
   status: string;
   isAvailable: boolean;
   bullets?: string[];
+  link?: string;
 }
 
 export interface Product {

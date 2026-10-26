@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { ScrollVideoBackground } from './ScrollVideoBackground';
 import { HERO_DATA } from '../../data/earnblueprintData';
@@ -25,19 +26,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="max-w-[1200px] mx-auto w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Main Text Content */}
         <div className="lg:col-span-7 flex flex-col items-start gap-6">
-          {/* Pillar Badges Row */}
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            {HERO_DATA.pillarBadges.map((badge, idx) => (
-              <span
-                key={idx}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white text-xs font-space font-medium backdrop-blur-md"
-              >
-                <span>{badge.icon}</span>
-                <span>{badge.label}</span>
-              </span>
-            ))}
-          </div>
-
           <h1 className="font-space font-bold text-4xl sm:text-5xl md:text-6xl text-white leading-[1.08] tracking-tight drop-shadow-md">
             {HERO_DATA.headline}
           </h1>
@@ -81,7 +69,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
 
               <blockquote className="font-space text-base md:text-lg text-white font-medium italic leading-relaxed">
-                "{HERO_DATA.quote}"
+                &quot;{HERO_DATA.quote}&quot;
               </blockquote>
 
               <div className="pt-3 border-t border-white/10 text-xs text-[#14b8a6] font-space font-semibold uppercase tracking-wider">

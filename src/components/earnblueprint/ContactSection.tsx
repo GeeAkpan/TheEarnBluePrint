@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { CLOSING_CTA_DATA, BUNDLE_DATA, CONTACT_EMAIL, TELEGRAM_URL, LINKTREE_URL } from '../../data/earnblueprintData';
 import { ScrollReveal } from './ScrollReveal';
@@ -33,7 +34,7 @@ export const ContactSection: React.FC = () => {
           </h2>
 
           <p className="text-gray-200 text-lg sm:text-xl max-w-[620px] leading-relaxed">
-            "{CLOSING_CTA_DATA.text}"
+            &quot;{CLOSING_CTA_DATA.text}&quot;
           </p>
 
           <div className="flex flex-col items-center gap-3 pt-2">

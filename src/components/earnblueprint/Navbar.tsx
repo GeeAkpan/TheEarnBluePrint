@@ -1,10 +1,15 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Logo } from './Logo';
 
 interface NavbarProps {
-  activePage: string;
-  onNavigate: (page: string) => void;
+  // Both omitted when rendered on a page other than the homepage (e.g.
+  // /jobs) — there's no scroll-spy or same-page section to navigate to from
+  // there, so links fall back to real hrefs back to "/" instead.
+  activePage?: string;
+  onNavigate?: (page: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
@@ -24,11 +29,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
   }, []);
 
   const handleNavClick = (page: string) => {
-    onNavigate(page);
+    onNavigate?.(page);
     setMobileOpen(false);
   };
 
   const isLight = activePage !== 'home' && isScrolled;
+
+  // onNavigate is only passed on the homepage (it drives scroll-spy there).
+  // Anywhere else, these need to be real links back to "/" + an anchor, not
+  // a same-page scrollIntoView call that has nothing to scroll to.
+  const standalone = !onNavigate;
+  const sectionHref = (id: string) => (id === 'home' ? '/' : `/#${id}`);
 
   const navLinks = [
     { id: 'home', label: 'Home' },
@@ -51,24 +62,34 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
       >
         <div className="max-w-[1200px] mx-auto flex items-center justify-between h-[72px]">
           {/* Official Transparent Logo */}
-          <Logo variant={isLight ? 'dark' : 'light'} onClick={() => handleNavClick('home')} />
+          {standalone ? (
+            <Link href="/">
+              <Logo variant={isLight ? 'dark' : 'light'} />
+            </Link>
+          ) : (
+            <Logo variant={isLight ? 'dark' : 'light'} onClick={() => handleNavClick('home')} />
+          )}
 
           {/* Desktop Links with Framer Motion Dynamic Underline */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => {
               const isActive = activePage === link.id;
+              const linkClassName = `text-sm font-medium transition-colors relative py-1 px-1 ${
+                isActive
+                  ? 'text-[#14b8a6] font-semibold'
+                  : isLight
+                  ? 'text-gray-700 hover:text-gray-900'
+                  : 'text-white/70 hover:text-white'
+              }`;
+              if (standalone) {
+                return (
+                  <Link key={link.id} href={sectionHref(link.id)} className={linkClassName}>
+                    {link.label}
+                  </Link>
+                );
+              }
               return (
-                <button
-                  key={link.id}
-                  onClick={() => handleNavClick(link.id)}
-                  className={`text-sm font-medium transition-colors relative py-1 px-1 ${
-                    isActive
-                      ? 'text-[#14b8a6] font-semibold'
-                      : isLight
-                      ? 'text-gray-700 hover:text-gray-900'
-                      : 'text-white/70 hover:text-white'
-                  }`}
-                >
+                <button key={link.id} onClick={() => handleNavClick(link.id)} className={linkClassName}>
                   {link.label}
                   {isActive && (
                     <motion.span
@@ -84,16 +105,49 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
                 </button>
               );
             })}
+            <Link
+              href="/jobs"
+              className={`text-sm font-medium transition-colors relative py-1 px-1 ${
+                isLight ? 'text-gray-700 hover:text-gray-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Jobs
+            </Link>
+            <Link
+              href="/learn"
+              className={`text-sm font-medium transition-colors relative py-1 px-1 ${
+                isLight ? 'text-gray-700 hover:text-gray-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Learn
+            </Link>
+            <Link
+              href="/store"
+              className={`text-sm font-medium transition-colors relative py-1 px-1 ${
+                isLight ? 'text-gray-700 hover:text-gray-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Store
+            </Link>
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center">
-            <button
-              onClick={() => handleNavClick('products')}
-              className="font-space text-xs font-bold px-5 py-2.5 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
-            >
-              Get Started
-            </button>
+            {standalone ? (
+              <Link
+                href="/#products"
+                className="font-space text-xs font-bold px-5 py-2.5 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+              >
+                Get Started
+              </Link>
+            ) : (
+              <button
+                onClick={() => handleNavClick('products')}
+                className="font-space text-xs font-bold px-5 py-2.5 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+              >
+                Get Started
+              </button>
+            )}
           </div>
 
           {/* Mobile Hamburger */}
@@ -118,25 +172,67 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
           >
             &times;
           </button>
-          {navLinks.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => handleNavClick(link.id)}
-              className={`font-space text-3xl font-bold text-left transition-colors flex items-center justify-between ${
-                activePage === link.id ? 'text-[#14b8a6]' : 'text-white hover:text-[#14b8a6]'
-              }`}
-            >
-              <span>{link.label}</span>
-              {activePage === link.id && <span className="text-xl">&bull;</span>}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            const mobileClassName = `font-space text-3xl font-bold text-left transition-colors flex items-center justify-between ${
+              activePage === link.id ? 'text-[#14b8a6]' : 'text-white hover:text-[#14b8a6]'
+            }`;
+            if (standalone) {
+              return (
+                <Link
+                  key={link.id}
+                  href={sectionHref(link.id)}
+                  onClick={() => setMobileOpen(false)}
+                  className={mobileClassName}
+                >
+                  <span>{link.label}</span>
+                </Link>
+              );
+            }
+            return (
+              <button key={link.id} onClick={() => handleNavClick(link.id)} className={mobileClassName}>
+                <span>{link.label}</span>
+                {activePage === link.id && <span className="text-xl">&bull;</span>}
+              </button>
+            );
+          })}
+          <Link
+            href="/learn"
+            onClick={() => setMobileOpen(false)}
+            className="font-space text-3xl font-bold text-left text-white hover:text-[#14b8a6] transition-colors"
+          >
+            Learn
+          </Link>
+          <Link
+            href="/store"
+            onClick={() => setMobileOpen(false)}
+            className="font-space text-3xl font-bold text-left text-white hover:text-[#14b8a6] transition-colors"
+          >
+            Store
+          </Link>
+          <Link
+            href="/jobs"
+            onClick={() => setMobileOpen(false)}
+            className="font-space text-3xl font-bold text-left text-white hover:text-[#14b8a6] transition-colors"
+          >
+            Jobs
+          </Link>
           <div className="mt-8 pt-6 border-t border-white/10">
-            <button
-              onClick={() => handleNavClick('products')}
-              className="w-full font-space text-sm font-bold py-3 rounded-lg bg-[#14b8a6] text-white text-center uppercase tracking-wider"
-            >
-              Explore Products
-            </button>
+            {standalone ? (
+              <Link
+                href="/#products"
+                onClick={() => setMobileOpen(false)}
+                className="block w-full font-space text-sm font-bold py-3 rounded-lg bg-[#14b8a6] text-white text-center uppercase tracking-wider"
+              >
+                Explore Products
+              </Link>
+            ) : (
+              <button
+                onClick={() => handleNavClick('products')}
+                className="w-full font-space text-sm font-bold py-3 rounded-lg bg-[#14b8a6] text-white text-center uppercase tracking-wider"
+              >
+                Explore Products
+              </button>
+            )}
           </div>
         </div>
       )}

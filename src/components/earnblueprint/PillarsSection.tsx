@@ -1,4 +1,6 @@
+"use client";
 import React from 'react';
+import Link from 'next/link';
 import { PILLARS_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
 
@@ -9,10 +11,10 @@ export const PillarsSection: React.FC = () => {
         {/* Section Header */}
         <ScrollReveal className="flex flex-col items-center text-center gap-3 mb-16">
           <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
-            Four Pillars of Income
+            Six Pillars of Income
           </span>
           <h2 className="font-space font-bold text-3xl sm:text-4xl md:text-5xl text-white">
-            What We Cover — <span className="text-[#14b8a6]">Four Pillars</span>
+            What We Cover — <span className="text-[#14b8a6]">Six Pillars</span>
           </h2>
           <p className="text-gray-400 text-base md:text-lg max-w-[640px] leading-relaxed">
             Every practical system you need to monetize, land high-value clients, build products, and scale.
@@ -67,6 +69,15 @@ export const PillarsSection: React.FC = () => {
                     </ul>
                   )}
                 </div>
+
+                {pillar.link && (
+                  <Link
+                    href={pillar.link}
+                    className="mt-6 inline-flex items-center justify-center gap-2 font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] self-start"
+                  >
+                    View {pillar.name} →
+                  </Link>
+                )}
               </div>
             </StaggerItem>
           ))}
