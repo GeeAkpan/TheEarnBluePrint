@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { COMMUNITY_HIGHLIGHTS, TELEGRAM_URL } from '../../data/earnblueprintData';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
@@ -6,6 +7,7 @@ interface CommunitySectionProps {
   onJoinClick?: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for API compatibility with callers; not wired to a CTA yet (pre-existing, unchanged from the Vite version)
 export const CommunitySection: React.FC<CommunitySectionProps> = ({ onJoinClick }) => {
   return (
     <section className="py-24 px-[5%] bg-[#0d1f3c] border-b border-white/5 relative">
@@ -22,7 +24,7 @@ export const CommunitySection: React.FC<CommunitySectionProps> = ({ onJoinClick 
             You do not have to figure it out alone.
           </p>
           <p className="text-gray-400 text-sm sm:text-base max-w-[660px] leading-relaxed">
-            The Earn Blueprint is backed by FTLD — one of Africa's largest tech and freelance talent communities. When you join, you are not just getting guides. You are joining a movement.
+            The Earn Blueprint is backed by FTLD — one of Africa&apos;s largest tech and freelance talent communities. When you join, you are not just getting guides. You are joining a movement.
           </p>
         </ScrollReveal>
 

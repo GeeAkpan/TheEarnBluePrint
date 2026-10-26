@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { FOUNDER_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal } from './ScrollReveal';
@@ -25,7 +26,7 @@ export const AboutSection: React.FC = () => {
 
             <div className="p-4 rounded-xl bg-white/[0.04] border-l-4 border-[#14b8a6] border-y border-r border-white/10 my-2 w-full">
               <p className="font-space text-lg text-white font-medium italic">
-                "{FOUNDER_DATA.keyQuote}"
+                &quot;{FOUNDER_DATA.keyQuote}&quot;
               </p>
             </div>
           </ScrollReveal>

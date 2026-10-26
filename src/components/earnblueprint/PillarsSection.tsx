@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { PILLARS_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';

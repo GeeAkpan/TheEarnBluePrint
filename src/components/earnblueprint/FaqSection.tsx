@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { FAQS_DATA } from '../../data/earnblueprintData';
 import type { FaqItem } from '../../types/earnblueprint';

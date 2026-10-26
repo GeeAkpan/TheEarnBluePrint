@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { INSIGHTS_DATA } from '../../data/earnblueprintData';
 import type { Insight } from '../../types/earnblueprint';
@@ -39,7 +40,7 @@ export const InsightsSection: React.FC = () => {
                   </div>
 
                   <h3 className="font-space text-xl font-bold text-white mb-3 group-hover:text-[#14b8a6] transition-colors leading-snug">
-                    "{article.title}"
+                    &quot;{article.title}&quot;
                   </h3>
 
                   <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -78,7 +79,7 @@ export const InsightsSection: React.FC = () => {
               </span>
 
               <h2 className="font-space text-2xl sm:text-3xl font-bold text-white mb-4 leading-tight">
-                "{activeArticle.title}"
+                &quot;{activeArticle.title}&quot;
               </h2>
 
               <div className="flex items-center gap-2 text-xs text-gray-400 mb-6 pb-4 border-b border-white/10">

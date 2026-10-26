@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { ScrollVideoBackground } from './ScrollVideoBackground';
 import { HERO_DATA } from '../../data/earnblueprintData';
@@ -81,7 +82,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
 
               <blockquote className="font-space text-base md:text-lg text-white font-medium italic leading-relaxed">
-                "{HERO_DATA.quote}"
+                &quot;{HERO_DATA.quote}&quot;
               </blockquote>
 
               <div className="pt-3 border-t border-white/10 text-xs text-[#14b8a6] font-space font-semibold uppercase tracking-wider">

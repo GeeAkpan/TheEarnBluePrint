@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { PRODUCTS_DATA, BUNDLE_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';

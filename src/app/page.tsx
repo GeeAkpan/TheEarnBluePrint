@@ -1,30 +1,32 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Navbar } from './components/earnblueprint/Navbar';
-import { HeroSection } from './components/earnblueprint/HeroSection';
-import { PillarsSection } from './components/earnblueprint/PillarsSection';
-import { ProductsSection } from './components/earnblueprint/ProductsSection';
-import { InsightsSection } from './components/earnblueprint/InsightsSection';
-import { CommunitySection } from './components/earnblueprint/CommunitySection';
-import { AboutSection } from './components/earnblueprint/AboutSection';
-import { FaqSection } from './components/earnblueprint/FaqSection';
-import { ContactSection } from './components/earnblueprint/ContactSection';
-import { Footer } from './components/earnblueprint/Footer';
-import { ScrollToTop } from './components/earnblueprint/ScrollToTop';
+"use client";
 
-export function App() {
-  const [activePage, setActivePage] = useState<string>('home');
+import { useState, useRef, useEffect } from "react";
+import { Navbar } from "@/components/earnblueprint/Navbar";
+import { HeroSection } from "@/components/earnblueprint/HeroSection";
+import { PillarsSection } from "@/components/earnblueprint/PillarsSection";
+import { ProductsSection } from "@/components/earnblueprint/ProductsSection";
+import { InsightsSection } from "@/components/earnblueprint/InsightsSection";
+import { CommunitySection } from "@/components/earnblueprint/CommunitySection";
+import { AboutSection } from "@/components/earnblueprint/AboutSection";
+import { FaqSection } from "@/components/earnblueprint/FaqSection";
+import { ContactSection } from "@/components/earnblueprint/ContactSection";
+import { Footer } from "@/components/earnblueprint/Footer";
+import { ScrollToTop } from "@/components/earnblueprint/ScrollToTop";
+
+export default function Home() {
+  const [activePage, setActivePage] = useState<string>("home");
   const heroScrollRef = useRef<HTMLDivElement | null>(null);
   const isClickNav = useRef<boolean>(false);
 
   const scrollToSection = (sectionId: string) => {
     isClickNav.current = true;
     setActivePage(sectionId);
-    if (sectionId === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (sectionId === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
     setTimeout(() => {
@@ -34,7 +36,7 @@ export function App() {
 
   // Scroll Spy to detect active section dynamically as user scrolls
   useEffect(() => {
-    const sections = ['home', 'products', 'insights', 'community', 'about', 'contact'];
+    const sections = ["home", "products", "insights", "community", "about", "contact"];
 
     const handleScroll = () => {
       if (isClickNav.current) return;
@@ -55,8 +57,8 @@ export function App() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -67,8 +69,8 @@ export function App() {
         <div id="home" ref={heroScrollRef}>
           <HeroSection
             containerRef={heroScrollRef}
-            onExploreProducts={() => scrollToSection('products')}
-            onReadGuides={() => scrollToSection('insights')}
+            onExploreProducts={() => scrollToSection("products")}
+            onReadGuides={() => scrollToSection("insights")}
           />
           <PillarsSection />
         </div>
@@ -82,7 +84,7 @@ export function App() {
         </div>
 
         <div id="community">
-          <CommunitySection onJoinClick={() => scrollToSection('contact')} />
+          <CommunitySection onJoinClick={() => scrollToSection("contact")} />
         </div>
 
         <div id="about">
@@ -103,5 +105,3 @@ export function App() {
     </div>
   );
 }
-
-export default App;
