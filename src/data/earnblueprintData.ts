@@ -9,12 +9,6 @@ export const HERO_DATA = {
     { value: "4", label: "Guides Live Now" },
     { value: "5,000+", label: "Innovate Attendees" },
     { value: "5 Yrs", label: "Building Live" }
-  ],
-  pillarBadges: [
-    { icon: "💼", label: "Freelancing" },
-    { icon: "🚀", label: "Entrepreneurship" },
-    { icon: "📈", label: "Business Growth" },
-    { icon: "🤖", label: "AI and Tech" }
   ]
 };
 
