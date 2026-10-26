@@ -11,10 +11,10 @@ export const PillarsSection: React.FC = () => {
         {/* Section Header */}
         <ScrollReveal className="flex flex-col items-center text-center gap-3 mb-16">
           <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
-            Four Pillars of Income
+            Six Pillars of Income
           </span>
           <h2 className="font-space font-bold text-3xl sm:text-4xl md:text-5xl text-white">
-            What We Cover — <span className="text-[#14b8a6]">Four Pillars</span>
+            What We Cover — <span className="text-[#14b8a6]">Six Pillars</span>
           </h2>
           <p className="text-gray-400 text-base md:text-lg max-w-[640px] leading-relaxed">
             Every practical system you need to monetize, land high-value clients, build products, and scale.

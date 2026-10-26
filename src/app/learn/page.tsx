@@ -114,25 +114,25 @@ export default async function LearnPage({
         </div>
 
         {/* Search */}
-        <form action="/learn" method="GET" className="flex items-center gap-3 max-w-[560px] mx-auto mb-6">
+        <form action="/learn" method="GET" className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-[560px] mx-auto mb-6">
           {category !== 'all' && <input type="hidden" name="category" value={category} />}
           <input
             type="text"
             name="q"
             defaultValue={query}
             placeholder="Search articles by title, author, or source…"
-            className="flex-1 rounded-lg bg-white/[0.05] border border-white/15 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#14b8a6]/60"
+            className="w-full sm:flex-1 rounded-lg bg-white/[0.05] border border-white/15 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#14b8a6]/60"
           />
           <button
             type="submit"
-            className="font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+            className="w-full sm:w-auto font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
           >
             Search
           </button>
           {query && (
             <Link
               href={buildHref(category, '', 1)}
-              className="font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
+              className="w-full sm:w-auto text-center font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
             >
               Clear
             </Link>
