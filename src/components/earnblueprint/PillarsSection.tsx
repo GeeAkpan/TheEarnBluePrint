@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Link from 'next/link';
 import { PILLARS_DATA } from '../../data/earnblueprintData';
 import { ScrollReveal, StaggerContainer, StaggerItem } from './ScrollReveal';
 
@@ -68,6 +69,15 @@ export const PillarsSection: React.FC = () => {
                     </ul>
                   )}
                 </div>
+
+                {pillar.link && (
+                  <Link
+                    href={pillar.link}
+                    className="mt-6 inline-flex items-center justify-center gap-2 font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] self-start"
+                  >
+                    View {pillar.name} →
+                  </Link>
+                )}
               </div>
             </StaggerItem>
           ))}

@@ -83,6 +83,23 @@ export const PILLARS_DATA: Pillar[] = [
       'Web3 & decentralized digital infrastructure monetization',
       'Automated marketing & client onboarding tech stacks'
     ]
+  },
+  {
+    id: 'jobs',
+    num: '05',
+    icon: '📋',
+    name: 'Jobs',
+    badge: 'Pillar 05',
+    headline: 'Fresh Roles, Updated Daily',
+    tagline: 'Tech and non-tech roles, remote and on-site, internships — aggregated daily from public job boards across Nigeria, Africa, and the world.',
+    status: 'Live now · updated daily',
+    isAvailable: true,
+    bullets: [
+      'Remote and on-site roles across tech, marketing, design, and more',
+      'Filter by region: Nigeria, Africa, or worldwide',
+      'Internships and graduate programmes alongside full-time roles'
+    ],
+    link: '/jobs'
   }
 ];
 

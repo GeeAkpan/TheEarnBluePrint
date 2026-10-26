@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Logo } from './Logo';
 
 interface NavbarProps {
@@ -85,6 +86,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
                 </button>
               );
             })}
+            <Link
+              href="/jobs"
+              className={`text-sm font-medium transition-colors relative py-1 px-1 ${
+                isLight ? 'text-gray-700 hover:text-gray-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Jobs
+            </Link>
           </div>
 
           {/* CTA Button */}
@@ -131,6 +140,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
               {activePage === link.id && <span className="text-xl">&bull;</span>}
             </button>
           ))}
+          <Link
+            href="/jobs"
+            onClick={() => setMobileOpen(false)}
+            className="font-space text-3xl font-bold text-left text-white hover:text-[#14b8a6] transition-colors"
+          >
+            Jobs
+          </Link>
           <div className="mt-8 pt-6 border-t border-white/10">
             <button
               onClick={() => handleNavClick('products')}
