@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Navbar } from '../../../components/earnblueprint/Navbar';
 
 const JOB_TYPES = ['Full-time', 'Part-time', 'Contract / Freelance', 'Internship / Graduate'];
 const REGIONS = ['Nigeria', 'Africa', 'Global'];
@@ -49,7 +50,9 @@ export default function PostJobPage() {
   const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2';
 
   return (
-    <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
       <div className="max-w-[640px] mx-auto">
         <Link
           href="/jobs"
@@ -159,6 +162,7 @@ export default function PostJobPage() {
           </form>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

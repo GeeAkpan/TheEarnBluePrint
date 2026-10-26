@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import pg from 'pg';
 import { BLOG_CATEGORIES } from '../../lib/blogSources';
+import { Navbar } from '../../components/earnblueprint/Navbar';
 
 // Refreshed daily by the fetch-blogs cron, so there's no need to hit
 // Postgres on every view.
@@ -76,7 +77,9 @@ export default async function LearnPage({
   const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   return (
-    <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
       <div className="max-w-[1000px] mx-auto">
         <div className="flex flex-col items-center text-center gap-3 mb-10">
           <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
@@ -208,6 +211,7 @@ export default async function LearnPage({
           publications and authors linked above.
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

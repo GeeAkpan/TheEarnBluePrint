@@ -97,6 +97,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
             >
               Jobs
             </Link>
+            <Link
+              href="/learn"
+              className={`text-sm font-medium transition-colors relative py-1 px-1 ${
+                isLight ? 'text-gray-700 hover:text-gray-900' : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Learn
+            </Link>
           </div>
 
           {/* CTA Button */}
@@ -143,6 +151,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
               {activePage === link.id && <span className="text-xl">&bull;</span>}
             </button>
           ))}
+          <Link
+            href="/learn"
+            onClick={() => setMobileOpen(false)}
+            className="font-space text-3xl font-bold text-left text-white hover:text-[#14b8a6] transition-colors"
+          >
+            Learn
+          </Link>
           <Link
             href="/jobs"
             onClick={() => setMobileOpen(false)}
