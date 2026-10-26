@@ -7,8 +7,8 @@ export const HERO_DATA = {
   stats: [
     { value: "5,000+", label: "People Trained" },
     { value: "4", label: "Guides Live Now" },
-    { value: "3,000+", label: "Innovate Attendees" },
-    { value: "7 Yrs", label: "Building Live" }
+    { value: "5,000+", label: "Innovate Attendees" },
+    { value: "5 Yrs", label: "Building Live" }
   ],
   pillarBadges: [
     { icon: "💼", label: "Freelancing" },
