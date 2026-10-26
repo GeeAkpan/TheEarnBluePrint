@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Navbar } from '../../../components/earnblueprint/Navbar';
 
 type Tone = 'professional' | 'friendly' | 'direct';
 
@@ -99,7 +100,9 @@ export default function PitchBuilder() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
       <div className="max-w-[720px] mx-auto">
         <Link
           href="/jobs"
@@ -215,6 +218,7 @@ export default function PitchBuilder() {
           .
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

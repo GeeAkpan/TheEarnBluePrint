@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import pg from 'pg';
+import { Navbar } from '../../components/earnblueprint/Navbar';
 
 // Refresh at most hourly — the underlying data only changes once a day
 // (JobScalper's cron run), so there's no need to hit Postgres on every view.
@@ -28,6 +29,27 @@ const FILTERS: Record<string, { label: string; where: string }> = {
 
 const PAGE_SIZE = 20;
 
+// Role-based quick filters. There's no dedicated fine-grained role field, so
+// these match keywords against the existing title column — same mechanism
+// as the free-text search, just pre-packaged as one-click options.
+const ROLE_CATEGORIES: Record<string, string[]> = {
+  'Community Manager': ['community manager', 'community lead'],
+  'Product Manager': ['product manager', 'product owner'],
+  'Digital Marketer': ['digital marketing', 'digital marketer', 'growth marketing'],
+  'Web Developer': ['web developer', 'frontend developer', 'front-end developer', 'backend developer', 'back-end developer', 'full stack developer', 'full-stack developer'],
+  'Software Engineer': ['software engineer', 'software developer'],
+  'Content Writer': ['content writer', 'copywriter', 'content creator'],
+  'Graphic Designer': ['graphic designer'],
+  'UI/UX Designer': ['ux designer', 'ui designer', 'product designer', 'ui/ux'],
+  'Virtual Assistant': ['virtual assistant'],
+  'Customer Support': ['customer support', 'customer service', 'support specialist'],
+  'Data Analyst': ['data analyst', 'data analytics'],
+  'Social Media Manager': ['social media manager', 'social media specialist'],
+  'Sales Representative': ['sales representative', 'sales executive', 'account executive'],
+  'Project Manager': ['project manager'],
+  'Accountant': ['accountant', 'bookkeeper'],
+};
+
 // Same escaping JobScalper's own bot.mjs searchFilter() uses, so a query
 // with %, _, or \ in it can't break the ILIKE pattern.
 function likePattern(query: string): string {
@@ -37,6 +59,7 @@ function likePattern(query: string): string {
 async function fetchJobs(
   filterKey: string,
   query: string,
+  role: string,
   page: number,
 ): Promise<{ jobs: JobRow[]; total: number }> {
   const filter = FILTERS[filterKey] ?? FILTERS.all;
@@ -45,6 +68,14 @@ async function fetchJobs(
   if (query) {
     params.push(likePattern(query));
     where.push(`(title ILIKE $${params.length} OR company ILIKE $${params.length} OR category ILIKE $${params.length})`);
+  }
+  const roleKeywords = ROLE_CATEGORIES[role];
+  if (roleKeywords) {
+    const clauses = roleKeywords.map((kw) => {
+      params.push(likePattern(kw));
+      return `title ILIKE $${params.length}`;
+    });
+    where.push(`(${clauses.join(' OR ')})`);
   }
   const whereSql = where.join(' AND ');
   const offset = (page - 1) * PAGE_SIZE;
@@ -63,12 +94,38 @@ async function fetchJobs(
   return { jobs: rows, total: Number(countRows[0]?.total ?? 0) };
 }
 
+type Stats = { freshWeek: number; companiesWeek: number; categoriesTotal: number; allTime: number };
+
+async function fetchStats(): Promise<Stats> {
+  const { rows } = await pool.query<{
+    fresh_week: string;
+    companies_week: string;
+    categories_total: string;
+    all_time: string;
+  }>(`
+    SELECT
+      count(*) FILTER (WHERE first_seen > now() - interval '7 days') AS fresh_week,
+      count(DISTINCT company) FILTER (WHERE first_seen > now() - interval '7 days' AND company IS NOT NULL) AS companies_week,
+      count(DISTINCT category) AS categories_total,
+      count(*) AS all_time
+    FROM jobs
+  `);
+  const r = rows[0];
+  return {
+    freshWeek: Number(r?.fresh_week ?? 0),
+    companiesWeek: Number(r?.companies_week ?? 0),
+    categoriesTotal: Number(r?.categories_total ?? 0),
+    allTime: Number(r?.all_time ?? 0),
+  };
+}
+
 const REGION_FLAG: Record<string, string> = { Nigeria: '🇳🇬', Africa: '🌍', Global: '🌐' };
 
-function buildHref(filterKey: string, query: string, page: number): string {
+function buildHref(filterKey: string, query: string, role: string, page: number): string {
   const params = new URLSearchParams();
   if (filterKey !== 'all') params.set('filter', filterKey);
   if (query) params.set('q', query);
+  if (role) params.set('role', role);
   if (page > 1) params.set('page', String(page));
   const qs = params.toString();
   return qs ? `/jobs?${qs}` : '/jobs';
@@ -77,17 +134,19 @@ function buildHref(filterKey: string, query: string, page: number): string {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: { filter?: string; q?: string; page?: string };
+  searchParams: { filter?: string; q?: string; role?: string; page?: string };
 }) {
   const filterKey = searchParams.filter && FILTERS[searchParams.filter] ? searchParams.filter : 'all';
   const query = (searchParams.q ?? '').trim().slice(0, 80);
+  const role = searchParams.role && ROLE_CATEGORIES[searchParams.role] ? searchParams.role : '';
   const page = Math.max(1, Number(searchParams.page) || 1);
 
   let jobs: JobRow[] = [];
   let total = 0;
+  let stats: Stats | null = null;
   let error: string | null = null;
   try {
-    ({ jobs, total } = await fetchJobs(filterKey, query, page));
+    [{ jobs, total }, stats] = await Promise.all([fetchJobs(filterKey, query, role, page), fetchStats()]);
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to load jobs right now.';
   }
@@ -96,7 +155,9 @@ export default async function JobsPage({
   const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   return (
-    <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
       <div className="max-w-[1000px] mx-auto">
         <div className="flex flex-col items-center text-center gap-3 mb-10">
           <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
@@ -109,19 +170,47 @@ export default async function JobsPage({
             Tech and non-tech roles, remote and on-site, internships — aggregated daily from public
             job boards across Nigeria, Africa, and the world.
           </p>
-          <a
-            href="https://t.me/jobscalperbot"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-2 font-space text-xs font-bold px-5 py-2.5 rounded-lg border border-[#14b8a6]/60 text-[#14b8a6] tracking-wider uppercase transition-all hover:bg-[#14b8a6] hover:text-white"
-          >
-            🔔 Get daily job alerts on Telegram
-          </a>
+
+          {stats && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 mt-4 mb-2">
+              {[
+                { value: stats.freshWeek, label: 'Fresh Jobs This Week' },
+                { value: stats.companiesWeek, label: 'Companies Hiring' },
+                { value: stats.categoriesTotal, label: 'Job Categories' },
+                { value: stats.allTime, label: 'Jobs Tracked All-Time' },
+              ].map((s) => (
+                <div key={s.label} className="flex flex-col items-center">
+                  <span className="font-space text-2xl sm:text-3xl font-bold text-[#14b8a6]">
+                    {s.value.toLocaleString()}+
+                  </span>
+                  <span className="text-xs text-gray-400 mt-1">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+            <a
+              href="https://t.me/jobscalperbot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-space text-xs font-bold px-5 py-2.5 rounded-lg border border-[#14b8a6]/60 text-[#14b8a6] tracking-wider uppercase transition-all hover:bg-[#14b8a6] hover:text-white"
+            >
+              🔔 Get daily job alerts on Telegram
+            </a>
+            <Link
+              href="/jobs/post"
+              className="inline-flex items-center gap-2 font-space text-xs font-bold px-5 py-2.5 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+            >
+              📝 Post a Job
+            </Link>
+          </div>
         </div>
 
         {/* Search */}
-        <form action="/jobs" method="GET" className="flex items-center gap-3 max-w-[560px] mx-auto mb-8">
+        <form action="/jobs" method="GET" className="flex items-center gap-3 max-w-[560px] mx-auto mb-6">
           {filterKey !== 'all' && <input type="hidden" name="filter" value={filterKey} />}
+          {role && <input type="hidden" name="role" value={role} />}
           <input
             type="text"
             name="q"
@@ -137,7 +226,39 @@ export default async function JobsPage({
           </button>
           {query && (
             <Link
-              href={buildHref(filterKey, '', 1)}
+              href={buildHref(filterKey, '', role, 1)}
+              className="font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
+            >
+              Clear
+            </Link>
+          )}
+        </form>
+
+        {/* Role category dropdown */}
+        <form action="/jobs" method="GET" className="flex items-center justify-center gap-3 max-w-[560px] mx-auto mb-6">
+          {filterKey !== 'all' && <input type="hidden" name="filter" value={filterKey} />}
+          {query && <input type="hidden" name="q" value={query} />}
+          <select
+            name="role"
+            defaultValue={role}
+            className="flex-1 rounded-lg bg-white/[0.05] border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#14b8a6]/60"
+          >
+            <option value="">All Categories</option>
+            {Object.keys(ROLE_CATEGORIES).map((label) => (
+              <option key={label} value={label}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            className="font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] whitespace-nowrap"
+          >
+            Apply
+          </button>
+          {role && (
+            <Link
+              href={buildHref(filterKey, query, '', 1)}
               className="font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
             >
               Clear
@@ -149,7 +270,7 @@ export default async function JobsPage({
           {Object.entries(FILTERS).map(([key, { label }]) => (
             <Link
               key={key}
-              href={buildHref(key, query, 1)}
+              href={buildHref(key, query, role, 1)}
               className={`font-space text-xs font-bold px-4 py-2 rounded-full border tracking-wider uppercase transition-all ${
                 filterKey === key
                   ? 'bg-[#14b8a6] text-white border-[#14b8a6]'
@@ -225,7 +346,7 @@ export default async function JobsPage({
           <div className="flex items-center justify-center gap-4 mt-10">
             {page > 1 ? (
               <Link
-                href={buildHref(filterKey, query, page - 1)}
+                href={buildHref(filterKey, query, role, page - 1)}
                 className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
               >
                 ‹ Prev
@@ -240,7 +361,7 @@ export default async function JobsPage({
             </span>
             {page < totalPages ? (
               <Link
-                href={buildHref(filterKey, query, page + 1)}
+                href={buildHref(filterKey, query, role, page + 1)}
                 className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
               >
                 Next ›
@@ -258,6 +379,7 @@ export default async function JobsPage({
           Himalayas, Working Nomads, Arbeitnow, MyJobMag, HotNigerianJobs, Web3.Career.
         </p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

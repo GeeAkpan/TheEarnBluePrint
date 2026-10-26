@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { Logo } from './Logo';
 
 interface NavbarProps {
-  activePage: string;
-  onNavigate: (page: string) => void;
+  // Both omitted when rendered on a page other than the homepage (e.g.
+  // /jobs) — there's no scroll-spy or same-page section to navigate to from
+  // there, so links fall back to real hrefs back to "/" instead.
+  activePage?: string;
+  onNavigate?: (page: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
@@ -26,7 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, onNavigate }) => {
   }, []);
 
   const handleNavClick = (page: string) => {
-    onNavigate(page);
+    onNavigate?.(page);
     setMobileOpen(false);
   };
 
