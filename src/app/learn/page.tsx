@@ -23,31 +23,48 @@ type BlogRow = {
 
 const PAGE_SIZE = 20;
 
+// Same escaping JobScalper's own search uses, so a query with %, _, or \
+// can't break the ILIKE pattern.
+function likePattern(query: string): string {
+  return `%${query.replace(/[\\%_]/g, (c) => '\\' + c)}%`;
+}
+
 async function fetchPosts(
   category: string,
+  query: string,
   page: number,
 ): Promise<{ posts: BlogRow[]; total: number }> {
-  const where = category === 'all' ? 'true' : 'category = $1';
-  const params = category === 'all' ? [] : [category];
+  const where: string[] = ['true'];
+  const params: string[] = [];
+  if (category !== 'all') {
+    params.push(category);
+    where.push(`category = $${params.length}`);
+  }
+  if (query) {
+    params.push(likePattern(query));
+    where.push(`(title ILIKE $${params.length} OR excerpt ILIKE $${params.length} OR author ILIKE $${params.length} OR source_name ILIKE $${params.length})`);
+  }
+  const whereSql = where.join(' AND ');
   const offset = (page - 1) * PAGE_SIZE;
 
   const [{ rows }, { rows: countRows }] = await Promise.all([
     pool.query<BlogRow>(
       `SELECT id, title, excerpt, author, source_name, source_url, url, category, published_at
          FROM blog_posts
-        WHERE ${where}
+        WHERE ${whereSql}
         ORDER BY published_at DESC NULLS LAST, fetched_at DESC
         LIMIT ${PAGE_SIZE} OFFSET $${params.length + 1}`,
       [...params, offset],
     ),
-    pool.query<{ total: string }>(`SELECT count(*) AS total FROM blog_posts WHERE ${where}`, params),
+    pool.query<{ total: string }>(`SELECT count(*) AS total FROM blog_posts WHERE ${whereSql}`, params),
   ]);
   return { posts: rows, total: Number(countRows[0]?.total ?? 0) };
 }
 
-function buildHref(category: string, page: number): string {
+function buildHref(category: string, query: string, page: number): string {
   const params = new URLSearchParams();
   if (category !== 'all') params.set('category', category);
+  if (query) params.set('q', query);
   if (page > 1) params.set('page', String(page));
   const qs = params.toString();
   return qs ? `/learn?${qs}` : '/learn';
@@ -56,19 +73,20 @@ function buildHref(category: string, page: number): string {
 export default async function LearnPage({
   searchParams,
 }: {
-  searchParams: { category?: string; page?: string };
+  searchParams: { category?: string; q?: string; page?: string };
 }) {
   const category =
     searchParams.category && BLOG_CATEGORIES.includes(searchParams.category as (typeof BLOG_CATEGORIES)[number])
       ? searchParams.category
       : 'all';
+  const query = (searchParams.q ?? '').trim().slice(0, 80);
   const page = Math.max(1, Number(searchParams.page) || 1);
 
   let posts: BlogRow[] = [];
   let total = 0;
   let error: string | null = null;
   try {
-    ({ posts, total } = await fetchPosts(category, page));
+    ({ posts, total } = await fetchPosts(category, query, page));
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to load articles right now.';
   }
@@ -95,9 +113,35 @@ export default async function LearnPage({
           </p>
         </div>
 
+        {/* Search */}
+        <form action="/learn" method="GET" className="flex items-center gap-3 max-w-[560px] mx-auto mb-6">
+          {category !== 'all' && <input type="hidden" name="category" value={category} />}
+          <input
+            type="text"
+            name="q"
+            defaultValue={query}
+            placeholder="Search articles by title, author, or source…"
+            className="flex-1 rounded-lg bg-white/[0.05] border border-white/15 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#14b8a6]/60"
+          />
+          <button
+            type="submit"
+            className="font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+          >
+            Search
+          </button>
+          {query && (
+            <Link
+              href={buildHref(category, '', 1)}
+              className="font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
+            >
+              Clear
+            </Link>
+          )}
+        </form>
+
         <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
           <Link
-            href={buildHref('all', 1)}
+            href={buildHref('all', query, 1)}
             className={`font-space text-xs font-bold px-4 py-2 rounded-full border tracking-wider uppercase transition-all ${
               category === 'all'
                 ? 'bg-[#14b8a6] text-white border-[#14b8a6]'
@@ -109,7 +153,7 @@ export default async function LearnPage({
           {BLOG_CATEGORIES.map((c) => (
             <Link
               key={c}
-              href={buildHref(c, 1)}
+              href={buildHref(c, query, 1)}
               className={`font-space text-xs font-bold px-4 py-2 rounded-full border tracking-wider uppercase transition-all ${
                 category === c
                   ? 'bg-[#14b8a6] text-white border-[#14b8a6]'
@@ -124,6 +168,7 @@ export default async function LearnPage({
         {!error && total > 0 && (
           <p className="text-center text-xs text-gray-500 mb-6">
             Showing {rangeStart}–{rangeEnd} of {total} article{total === 1 ? '' : 's'}
+            {query && <> matching &ldquo;{query}&rdquo;</>}
           </p>
         )}
 
@@ -160,14 +205,12 @@ export default async function LearnPage({
                     {post.author ? `By ${post.author} · ` : ''}
                     {post.source_name}
                   </p>
-                  <a
-                    href={post.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/learn/${encodeURIComponent(post.id)}`}
                     className="font-space text-xs font-bold px-4 py-2 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] inline-block"
                   >
-                    Read Full Article →
-                  </a>
+                    Read More →
+                  </Link>
                 </div>
               </li>
             ))}
@@ -178,7 +221,7 @@ export default async function LearnPage({
           <div className="flex items-center justify-center gap-4 mt-10">
             {page > 1 ? (
               <Link
-                href={buildHref(category, page - 1)}
+                href={buildHref(category, query, page - 1)}
                 className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
               >
                 ‹ Prev
@@ -193,7 +236,7 @@ export default async function LearnPage({
             </span>
             {page < totalPages ? (
               <Link
-                href={buildHref(category, page + 1)}
+                href={buildHref(category, query, page + 1)}
                 className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
               >
                 Next ›

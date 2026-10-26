@@ -72,3 +72,22 @@ export function toDate(value: string): Date | null {
   const d = new Date(value);
   return Number.isNaN(d.getTime()) ? null : d;
 }
+
+// Lightweight heuristic, not real language detection — good enough as a
+// curation filter, not a linguistics tool. Two checks on the combined
+// title+excerpt: (1) reject if it contains non-Latin script (CJK, Cyrillic,
+// Arabic, etc.) — a strong signal; (2) among Latin-script text, require at
+// least a couple of common English stopwords, which filters out most
+// Latin-script non-English languages (French, Spanish, German, ...)
+// without needing an NLP library for a handful of curated feeds.
+const NON_LATIN_SCRIPT = /[Ѐ-ӿ؀-ۿऀ-ॿ぀-ヿ一-鿿가-힯]/;
+const ENGLISH_STOPWORDS = /\b(the|and|of|to|is|in|for|with|on|that|your|how|you|this|are)\b/gi;
+
+export function isEnglish(text: string): boolean {
+  if (!text || !text.trim()) return true; // nothing to judge, don't reject on absence
+  if (NON_LATIN_SCRIPT.test(text)) return false;
+  const words = text.trim().split(/\s+/).length;
+  if (words < 4) return true; // too short for the stopword heuristic to be meaningful either way
+  const matches = text.match(ENGLISH_STOPWORDS);
+  return (matches?.length ?? 0) >= 2;
+}

@@ -7,7 +7,7 @@
 import pg from 'pg';
 import { NextRequest, NextResponse } from 'next/server';
 import { BLOG_SOURCES } from '../../../../lib/blogSources';
-import { parseRssItems, stripHtml, truncate, toDate } from '../../../../lib/rss';
+import { parseRssItems, stripHtml, truncate, toDate, isEnglish } from '../../../../lib/rss';
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -44,6 +44,7 @@ async function fetchSource(source: (typeof BLOG_SOURCES)[number]) {
     const id = item.guid || item.link;
     if (!id || !item.title || !item.link) continue;
     const excerpt = truncate(stripHtml(item.description), 300);
+    if (!isEnglish(`${item.title} ${excerpt}`)) continue;
     const publishedAt = toDate(item.pubDate);
 
     const { rowCount } = await pool.query(
