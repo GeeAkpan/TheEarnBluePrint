@@ -100,6 +100,23 @@ export const PILLARS_DATA: Pillar[] = [
       'Internships and graduate programmes alongside full-time roles'
     ],
     link: '/jobs'
+  },
+  {
+    id: 'earn-with-ai',
+    num: '06',
+    icon: '🧠',
+    name: 'Earn with AI',
+    badge: 'Pillar 06',
+    headline: 'Get Paid to Train AI',
+    tagline: 'Hand-verified platforms paying for RLHF, data labeling, and model evaluation work — with real eligibility notes, since this space is heavily targeted by scams.',
+    status: 'Live now · hand-verified',
+    isAvailable: true,
+    bullets: [
+      'Mercor, Micro1, Outlier, Alignerr, Surge AI, and more',
+      'Pay ranges and eligibility checked per platform, per country',
+      'Flags scam risk — never pay to apply or "unlock" work'
+    ],
+    link: '/earn-with-ai'
   }
 ];
 
