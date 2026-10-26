@@ -37,14 +37,15 @@ export const PILLARS_DATA: Pillar[] = [
     name: 'Entrepreneurship',
     badge: 'Pillar 02',
     headline: 'Launch & Scale Digital Products',
-    tagline: 'Launch digital products, build brands, create income streams, and grow from solo operator to real business owner.',
-    status: 'Coming soon',
-    isAvailable: false,
+    tagline: 'List and sell products to this community. Buyers order directly on WhatsApp — free to list, for now.',
+    status: 'Live now · free to list',
+    isAvailable: true,
     bullets: [
-      'Digital product idea validation & Gumroad / LemonSqueezy launchkits',
-      'Audience-first brand positioning & organic content funnels',
-      'Productized service frameworks & revenue diversification'
-    ]
+      'A storefront for products made by people in this community',
+      'Buyers message you directly on WhatsApp to order',
+      'No commission or listing fee right now'
+    ],
+    link: '/store'
   },
   {
     id: 'business-growth',
