@@ -26,38 +26,79 @@ const FILTERS: Record<string, { label: string; where: string }> = {
   intern: { label: 'Internships', where: "job_type LIKE 'Internship%'" },
 };
 
-async function fetchJobs(filterKey: string): Promise<JobRow[]> {
+const PAGE_SIZE = 20;
+
+// Same escaping JobScalper's own bot.mjs searchFilter() uses, so a query
+// with %, _, or \ in it can't break the ILIKE pattern.
+function likePattern(query: string): string {
+  return `%${query.replace(/[\\%_]/g, (c) => '\\' + c)}%`;
+}
+
+async function fetchJobs(
+  filterKey: string,
+  query: string,
+  page: number,
+): Promise<{ jobs: JobRow[]; total: number }> {
   const filter = FILTERS[filterKey] ?? FILTERS.all;
-  const { rows } = await pool.query<JobRow>(
-    `SELECT title, company, url, category, region, job_type, remote, first_seen
-       FROM jobs
-      WHERE first_seen > now() - interval '7 days' AND ${filter.where}
-      ORDER BY first_seen DESC
-      LIMIT 60`,
-  );
-  return rows;
+  const where = [`first_seen > now() - interval '7 days'`, filter.where];
+  const params: string[] = [];
+  if (query) {
+    params.push(likePattern(query));
+    where.push(`(title ILIKE $${params.length} OR company ILIKE $${params.length} OR category ILIKE $${params.length})`);
+  }
+  const whereSql = where.join(' AND ');
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const [{ rows }, { rows: countRows }] = await Promise.all([
+    pool.query<JobRow>(
+      `SELECT title, company, url, category, region, job_type, remote, first_seen
+         FROM jobs
+        WHERE ${whereSql}
+        ORDER BY first_seen DESC
+        LIMIT ${PAGE_SIZE} OFFSET $${params.length + 1}`,
+      [...params, offset],
+    ),
+    pool.query<{ total: string }>(`SELECT count(*) AS total FROM jobs WHERE ${whereSql}`, params),
+  ]);
+  return { jobs: rows, total: Number(countRows[0]?.total ?? 0) };
 }
 
 const REGION_FLAG: Record<string, string> = { Nigeria: '🇳🇬', Africa: '🌍', Global: '🌐' };
 
+function buildHref(filterKey: string, query: string, page: number): string {
+  const params = new URLSearchParams();
+  if (filterKey !== 'all') params.set('filter', filterKey);
+  if (query) params.set('q', query);
+  if (page > 1) params.set('page', String(page));
+  const qs = params.toString();
+  return qs ? `/jobs?${qs}` : '/jobs';
+}
+
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: { filter?: string };
+  searchParams: { filter?: string; q?: string; page?: string };
 }) {
   const filterKey = searchParams.filter && FILTERS[searchParams.filter] ? searchParams.filter : 'all';
+  const query = (searchParams.q ?? '').trim().slice(0, 80);
+  const page = Math.max(1, Number(searchParams.page) || 1);
+
   let jobs: JobRow[] = [];
+  let total = 0;
   let error: string | null = null;
   try {
-    jobs = await fetchJobs(filterKey);
+    ({ jobs, total } = await fetchJobs(filterKey, query, page));
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to load jobs right now.';
   }
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   return (
     <div className="min-h-screen bg-[#0d1f3c] text-white pt-32 pb-24 px-[5%]">
       <div className="max-w-[1000px] mx-auto">
-        <div className="flex flex-col items-center text-center gap-3 mb-12">
+        <div className="flex flex-col items-center text-center gap-3 mb-10">
           <span className="font-space text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
             Pillar 05 · Jobs
           </span>
@@ -68,13 +109,47 @@ export default async function JobsPage({
             Tech and non-tech roles, remote and on-site, internships — aggregated daily from public
             job boards across Nigeria, Africa, and the world.
           </p>
+          <a
+            href="https://t.me/jobscalperbot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-2 font-space text-xs font-bold px-5 py-2.5 rounded-lg border border-[#14b8a6]/60 text-[#14b8a6] tracking-wider uppercase transition-all hover:bg-[#14b8a6] hover:text-white"
+          >
+            🔔 Get daily job alerts on Telegram
+          </a>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+        {/* Search */}
+        <form action="/jobs" method="GET" className="flex items-center gap-3 max-w-[560px] mx-auto mb-8">
+          {filterKey !== 'all' && <input type="hidden" name="filter" value={filterKey} />}
+          <input
+            type="text"
+            name="q"
+            defaultValue={query}
+            placeholder="Search by role, skill, or company…"
+            className="flex-1 rounded-lg bg-white/[0.05] border border-white/15 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#14b8a6]/60"
+          />
+          <button
+            type="submit"
+            className="font-space text-xs font-bold px-5 py-3 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)]"
+          >
+            Search
+          </button>
+          {query && (
+            <Link
+              href={buildHref(filterKey, '', 1)}
+              className="font-space text-xs font-bold px-4 py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/40 hover:text-white tracking-wider uppercase whitespace-nowrap"
+            >
+              Clear
+            </Link>
+          )}
+        </form>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
           {Object.entries(FILTERS).map(([key, { label }]) => (
             <Link
               key={key}
-              href={key === 'all' ? '/jobs' : `/jobs?filter=${key}`}
+              href={buildHref(key, query, 1)}
               className={`font-space text-xs font-bold px-4 py-2 rounded-full border tracking-wider uppercase transition-all ${
                 filterKey === key
                   ? 'bg-[#14b8a6] text-white border-[#14b8a6]'
@@ -85,6 +160,13 @@ export default async function JobsPage({
             </Link>
           ))}
         </div>
+
+        {!error && total > 0 && (
+          <p className="text-center text-xs text-gray-500 mb-6">
+            Showing {rangeStart}–{rangeEnd} of {total} job{total === 1 ? '' : 's'}
+            {query && <> matching &ldquo;{query}&rdquo;</>}
+          </p>
+        )}
 
         {error && (
           <p className="text-center text-gray-400 py-12">
@@ -129,6 +211,38 @@ export default async function JobsPage({
               </li>
             ))}
           </ul>
+        )}
+
+        {!error && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-10">
+            {page > 1 ? (
+              <Link
+                href={buildHref(filterKey, query, page - 1)}
+                className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
+              >
+                ‹ Prev
+              </Link>
+            ) : (
+              <span className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/5 text-gray-600 tracking-wider uppercase">
+                ‹ Prev
+              </span>
+            )}
+            <span className="text-sm text-gray-400">
+              Page {page} of {totalPages}
+            </span>
+            {page < totalPages ? (
+              <Link
+                href={buildHref(filterKey, query, page + 1)}
+                className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/15 text-gray-300 hover:border-[#14b8a6]/60 hover:text-white tracking-wider uppercase"
+              >
+                Next ›
+              </Link>
+            ) : (
+              <span className="font-space text-xs font-bold px-4 py-2 rounded-lg border border-white/5 text-gray-600 tracking-wider uppercase">
+                Next ›
+              </span>
+            )}
+          </div>
         )}
 
         <p className="text-center text-xs text-gray-500 mt-12">
