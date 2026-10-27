@@ -1,22 +1,12 @@
 import Link from 'next/link';
 import pg from 'pg';
 import { Navbar } from '../../components/earnblueprint/Navbar';
+import { ShareProductButton } from '../../components/earnblueprint/ShareProductButton';
+import { whatsappOrderLink, type ProductRow } from '../../lib/products';
 
 export const revalidate = 1800;
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-
-type ProductRow = {
-  id: number;
-  name: string;
-  description: string | null;
-  price: string;
-  currency: string;
-  category: string;
-  image_url: string | null;
-  seller_name: string;
-  seller_whatsapp: string;
-};
 
 const PAGE_SIZE = 20;
 
@@ -70,11 +60,6 @@ function buildHref(category: string, query: string, page: number): string {
   if (page > 1) params.set('page', String(page));
   const qs = params.toString();
   return qs ? `/store?${qs}` : '/store';
-}
-
-function whatsappOrderLink(product: ProductRow): string {
-  const message = `Hi ${product.seller_name}, I'm interested in "${product.name}" (${product.currency} ${Number(product.price).toLocaleString()}) from The Earn Blueprint Store.`;
-  return `https://wa.me/${product.seller_whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 export default async function StorePage({
@@ -194,16 +179,22 @@ export default async function StorePage({
                   key={product.id}
                   className="rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden flex flex-col hover:border-[#14b8a6]/40 hover:bg-white/[0.06] transition-all"
                 >
-                  {product.image_url && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
-                  )}
+                  <Link href={`/store/${product.id}`}>
+                    {product.image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
+                    )}
+                  </Link>
                   <div className="p-6 flex flex-col flex-1 justify-between">
                     <div>
                       <span className="text-[#14b8a6] text-xs font-bold uppercase tracking-wider">
                         {product.category}
                       </span>
-                      <h3 className="font-space text-lg font-bold text-white mt-2 mb-1">{product.name}</h3>
+                      <Link href={`/store/${product.id}`}>
+                        <h3 className="font-space text-lg font-bold text-white mt-2 mb-1 hover:text-[#14b8a6] transition-colors">
+                          {product.name}
+                        </h3>
+                      </Link>
                       <p className="text-white font-semibold mb-2">
                         {product.currency} {Number(product.price).toLocaleString()}
                       </p>
@@ -213,14 +204,17 @@ export default async function StorePage({
                         </p>
                       )}
                     </div>
-                    <a
-                      href={whatsappOrderLink(product)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-space text-xs font-bold px-4 py-2 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] text-center"
-                    >
-                      Order via WhatsApp
-                    </a>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <a
+                        href={whatsappOrderLink(product)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 font-space text-xs font-bold px-4 py-2 rounded-lg bg-[#14b8a6] text-white tracking-wider uppercase transition-all hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(20,184,166,0.35)] text-center"
+                      >
+                        Order via WhatsApp
+                      </a>
+                      <ShareProductButton productId={product.id} productName={product.name} />
+                    </div>
                   </div>
                 </li>
               ))}
