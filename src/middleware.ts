@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Edge runtime has no Node `crypto.timingSafeEqual` — this is the portable
-// constant-time equivalent (XOR every byte instead of short-circuiting on
-// the first mismatch).
-function timingSafeEqualStr(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
+// Edge runtime has no Node `crypto.timingSafeEqual`. Comparing raw strings
+// byte-by-byte still leaks the secret's length through an early return on a
+// length mismatch, so hash both sides to a fixed-length digest first (Edge
+// runtime's Web Crypto is available globally) and compare those instead.
+async function timingSafeEqualStr(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder();
+  const [digestA, digestB] = await Promise.all([
+    crypto.subtle.digest('SHA-256', enc.encode(a)),
+    crypto.subtle.digest('SHA-256', enc.encode(b)),
+  ]);
+  const viewA = new Uint8Array(digestA);
+  const viewB = new Uint8Array(digestB);
   let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  for (let i = 0; i < viewA.length; i++) {
+    result |= viewA[i] ^ viewB[i];
   }
   return result === 0;
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const secret = process.env.ADMIN_REVIEW_SECRET;
   if (!secret) {
     return new NextResponse('Admin review is not configured.', { status: 503 });
@@ -23,7 +30,7 @@ export function middleware(req: NextRequest) {
     const decoded = atob(header.slice(6));
     const separatorIndex = decoded.indexOf(':');
     const suppliedPassword = separatorIndex >= 0 ? decoded.slice(separatorIndex + 1) : decoded;
-    if (timingSafeEqualStr(suppliedPassword, secret)) {
+    if (await timingSafeEqualStr(suppliedPassword, secret)) {
       return NextResponse.next();
     }
   }
